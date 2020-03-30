@@ -13,13 +13,13 @@ import org.http4s.circe.CirceEntityCodec._
 import org.http4s.headers.Authorization
 
 case class Notification[T](
-                       notification_id: Long,
-                       sender_id: Long,
-                       sender_type: String,
-                       value: T,
-                       timestamp: ZonedDateTime,
-                       `type`: String
-                       )
+    notification_id: Long,
+    sender_id: Long,
+    sender_type: String,
+    value: T,
+    timestamp: ZonedDateTime,
+    `type`: String
+)
 object Notification {
   implicit val func: Functor[Notification] = new Functor[Notification] {
     override def map[A, B](fa: Notification[A])(f: A => B): Notification[B] =
@@ -27,9 +27,7 @@ object Notification {
   }
   implicit val trav: Traverse[Notification] = new Traverse[Notification] {
     override def traverse[G[_], A, B](fa: Notification[A])(f: A => G[B])(implicit evidence$1: Applicative[G]): G[Notification[B]] =
-      f(fa.value).map { b =>
-        fa.copy(value = b)
-      }
+      f(fa.value).map { b => fa.copy(value = b) }
     override def foldLeft[A, B](fa: Notification[A], b: B)(f: (B, A) => B): B =
       f(b, fa.value)
     override def foldRight[A, B](fa: Notification[A], lb: Eval[B])(f: (A, Eval[B]) => Eval[B]): Eval[B] =
@@ -66,7 +64,8 @@ object Notifications {
             headers = Headers.of(
               Authorization(
                 Credentials.Token(
-                  AuthScheme.Bearer, accessToken.accessToken
+                  AuthScheme.Bearer,
+                  accessToken.accessToken
                 )
               )
             )
