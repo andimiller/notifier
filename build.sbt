@@ -16,11 +16,14 @@ libraryDependencies ++= List(
   "com.monovore" %% "decline" % "1.0.0",
   "com.github.cb372" %% "scalacache-cats-effect" % "0.28.0",
   "com.github.cb372" %% "scalacache-caffeine" % "0.28.0",
+  "com.github.cb372" %% "scalacache-redis" % "0.28.0",
   "com.github.cb372" %% "scalacache-circe" % "0.28.0",
   "ch.qos.logback"  %  "logback-classic" % "1.2.3",
   "io.github.jmcardon" %% "tsec-jwt-sig" % "0.2.0",
   "io.github.jmcardon" %% "tsec-jwt-mac" % "0.2.0",
   "io.circe" %% "circe-yaml" % "0.12.0",
+  "com.beachape" %% "enumeratum" % "1.5.15",
+  "com.beachape" %% "enumeratum-circe" % "1.5.23",
 )
 
 addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")

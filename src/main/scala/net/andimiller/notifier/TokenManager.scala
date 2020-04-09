@@ -10,6 +10,8 @@ import scalacache.serialization.circe._
 import scalacache.memoization._
 import cats.effect.Async
 import io.chrisdavenport.log4cats.Logger
+import scalacache.redis.RedisCache
+import io.circe.generic.auto._
 
 import scala.concurrent.duration._
 
@@ -24,13 +26,13 @@ trait TokenManager[F[_]] {
 }
 
 object TokenManager {
-  def apply[F[_]: Async](oauth: OAuth2[F]): F[TokenManager[F]] =
-    Async[F].delay { CaffeineCache[AccessToken](CacheConfig()) }.map { cache => (refreshToken: String) =>
-      OptionT(cache.get[F](refreshToken)).getOrElseF(
+  def apply[F[_]: Async](oauth: OAuth2[F], redisHost: String): F[TokenManager[F]] =
+    Async[F].delay { RedisCache[AccessToken](redisHost, 6379) }.map { cache => (refreshToken: String) =>
+      OptionT(cache.get[F]("refresh", refreshToken)).getOrElseF(
         oauth.refresh(refreshToken).flatMap {
           case (v, r) =>
             val token = AccessToken(v.CharacterID, v.CharacterName, r.access_token)
-            cache.put[F](refreshToken)(token, Some(r.expires_in.seconds)).as(token)
+            cache.put[F]("refresh", refreshToken)(token, Some(r.expires_in.seconds)).as(token)
         }
       )
     }
